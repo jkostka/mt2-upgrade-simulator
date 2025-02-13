@@ -10,15 +10,15 @@ The maximum upgrade level for a talisman is +200, and for snake equipment it's +
 Each upgrade level has a different percentage chance of success.
 For talismans, the base chance is cyclical:
 
-+01 55%
-+02 50%
-+03 45%
-+04 40%
-+05 35%
-+06 30%
-+07 25%
-+08 20%
-+09 15%
++1 55%
++2 50%
++3 45%
++4 40%
++5 35%
++6 30%
++7 25%
++8 20%
++9 15%
 +10 10%
 +11 55%
 +12 50%
@@ -28,24 +28,26 @@ For talismans, the base chance is cyclical:
 +99 15%
 (...)
 +125 35%
+(...)
++200 10%
 
 For snake equipment, the base chances are as follows:
 
-+01 90%
-+02 75%
-+03 60%
-+04 50%
-+05 40%
-+06 30%
-+07 25%
-+08 15%
-+09 08%
-+10 05%
-+11 05%
-+12 05%
-+13 05%
-+14 03%
-+15 03%
++1 90%
++2 75%
++3 60%
++4 50%
++5 40%
++6 30%
++7 25%
++8 15%
++9 8%
++10 5%
++11 5%
++12 5%
++13 5%
++14 3%
++15 3%
 
 The above chances are the base chances. The data comes from https://metin2alerts.com/upgradeList/
 
@@ -68,8 +70,8 @@ Project is created with:
 To run this project perform the following steps
 
 ```
-$ pip install flask
-$ python ./app.py
+ pip install flask
+ python ./app.py
 ```
 
 ## Additional info
