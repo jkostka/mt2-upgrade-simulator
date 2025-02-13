@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Symulator ulepszania by Catastroph1c</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/t8RwR2f.png" sizes="96x96" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/sKc6iBs.png" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #EBDED5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 750px;
+            width: 95%;
+            box-sizing: border-box;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background-color: #EBDED5;
+            padding: 10px 0;
+        }
+
+        header a {
+            display: block;
+        }
+
+        header img {
+            max-width: 100%;
+            height: auto;
+            max-height: 80px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #1a202c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, input[type="number"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #d2d6dc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #2563eb;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1e40af;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results h2 {
+            font-size: 1.25rem;
+            color: #1a202c;
+        }
+
+        canvas {
+            margin-top: 20px;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #2563eb;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.9rem;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="https://www.youtube.com/@Catastroph1c" target="_blank">
+            <img src="https://yt3.googleusercontent.com/mJwYi-IgBj5kDOZlG70QhaLhl5gVbCbxMR5h1mhoHROBfoCkIBR5niXIaD4DVkeiUZJ1heNMJA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Logo">
+        </a>
+    </header>
+
+    <div class="container">
+        <a href="https://www.youtube.com/@Catastroph1c" target="_blank" style="text-decoration: none; color: inherit;">
+            <h1>Symulator ulepszania</h1>
+        </a>
+
+        <form method="POST" onsubmit="return walidujFormularz()">
+            {% if error_message %}
+                <p style="color: red;">{{ error_message }}</p>
+            {% endif %}
+
+            <label for="rodzaj_przedmiotu">Wybierz rodzaj przedmiotu:</label>
+            <select name="rodzaj_przedmiotu" id="rodzaj_przedmiotu" onchange="pokazUkryjZwoj()">
+                <option value="proszę wybrać" {% if rodzaj_przedmiotu == "proszę wybrać" %}selected{% endif %}>Proszę wybrać</option>
+                <option value="talizman" {% if rodzaj_przedmiotu == "talizman" %}selected{% endif %}>Talizman</option>
+                <option value="bron" {% if rodzaj_przedmiotu == "bron" %}selected{% endif %}>Ekwipunek wężowy</option>
+            </select>
+
+            <label for="start_level">Aktualny poziom ulepszenia przedmiotu:</label>
+            <input type="number" name="start_level" id="start_level" min="0" value="{{ start_level }}">
+
+            <label for="rodzaj_zwoju">Rodzaj zwoju:</label>
+            <select name="rodzaj_zwoju" id="rodzaj_zwoju" disabled>
+                <option value="proszę wybrać" {% if rodzaj_zwoju == "proszę wybrać" %}selected{% endif %}>Proszę wybrać</option>
+                <option value="magiczny kamień" {% if rodzaj_zwoju == "magiczny kamień" %}selected{% endif %}>Magiczny Kamień</option>
+                <option value="rytualny kamień" {% if rodzaj_zwoju == "rytualny kamień" %}selected{% endif %}>Rytualny Kamień</option>
+                <option value="pieczęć boga smoków" {% if rodzaj_zwoju == "pieczęć boga smoków" %}selected{% endif %}>Pieczęć Boga Smoków</option>
+            </select>
+
+            <label for="ilosc_prob">Ilość zwojów:</label>
+            <input type="number" name="ilosc_prob" id="ilosc_prob" min="1" value="{{ ilosc_prob }}">
+
+            <label for="ilosc_symulacji">Ilość symulacji (1-1000):</label>
+            <input type="number" name="ilosc_symulacji" id="ilosc_symulacji" min="1" max="1000" value="{{ ilosc_symulacji }}">
+
+            <input type="submit" value="Przeprowadź symulacje">
+        </form>
+
+        {% if wyniki %}
+            <div class="results">
+                <h2>Podsumowanie:</h2>
+                <p><b>Startowy poziom ulepszenia przedmiotu: <span style="color: green; font-size: 1.2em;">+{{ wyniki.start }}</span></b></p>
+           <!--<p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Średnia_arytmetyczna" target="_blank">Średnia wartość</a>: <span style="color: blue; font-size: 1.2em;">+{{ wyniki.sredni|int }}</span></b></p>-->
+                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Mediana" target="_blank">Mediana</a>: <span style="color: orange; font-size: 1.2em;">+{{ wyniki.mediana|int }}</span></b></p>
+                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Dominanta_(statystyka)" target="_blank">Dominanta</a>: <span style="color: red; font-size: 1.2em;">+{{ wyniki.domina|int }}</span></b></p>
+
+                <h2>Szczegółowe wyniki na {{ wyniki.iloscsymulacji }} symulacji:</h2>
+                <h3>Liczba wystąpień każdego poziomu:</h3>
+                <ul>
+                    {% for level, liczba in wyniki.liczniki.items()|sort %}
+                        <li>+<span style="color: red;">{{ level }}</span>: {{ liczba }} razy</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <canvas id="myChart"></canvas>
+            <script>
+                {% if wyniki %}
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    const dominantIndex = Object.keys({{ wyniki.liczniki }}).indexOf('{{ wyniki.domina }}');
+                    const backgroundColors = Object.keys({{ wyniki.liczniki }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)');
+                    const borderColors = Object.keys({{ wyniki.liczniki }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)');
+
+                    const myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: [{% for level, liczba in wyniki.liczniki.items()|sort %}'+{{ level }}',{% endfor %}],
+                            datasets: [{
+                                label: 'Liczba wystąpień',
+                                data: [{% for level, liczba in wyniki.liczniki.items()|sort %}{{ liczba }},{% endfor %}],
+                                backgroundColor: backgroundColors,
+                                borderColor: borderColors,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    precision: 0
+                                }
+                            }
+                        }
+                    });
+                {% endif %}
+            </script>
+        {% endif %}
+
+        <div class="links">
+            <a href="https://tipply.pl/@catastroph1c">Wsparcie twórcy</a>
+            <a href="https://www.youtube.com/@Catastroph1c">Kanał YouTube</a>
+            <a href="https://i.imgur.com/8P4VyuG.gif">Cennik żywiołów/zestawów</a>
+        </div>
+    </div>
+
+    <script>
+        function pokazUkryjZwoj() {
+            const rodzajPrzedmiotu = document.getElementById('rodzaj_przedmiotu').value;
+            const rodzajZwoju = document.getElementById('rodzaj_zwoju');
+            rodzajZwoju.disabled = rodzajPrzedmiotu !== 'bron';
+            if (rodzajPrzedmiotu === 'talizman') {
+                rodzajZwoju.value = 'magiczny kamień';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            pokazUkryjZwoj();
+        });
+    </script>
+</body>
+</html>
