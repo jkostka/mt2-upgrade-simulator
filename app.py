@@ -43,7 +43,8 @@ def symuluj_ulepszanie(start_level, ilosc_prob, rodzaj_przedmiotu, rodzaj_zwoju)
     historia_ulepszen = [start_level]
 
     for _ in range(ilosc_prob):
-        if aktualny_level >= 15 and rodzaj_przedmiotu == "bron":
+        if (rodzaj_przedmiotu == "bron" and aktualny_level >= 14) or \
+           (rodzaj_przedmiotu == "talizman" and aktualny_level >= 199):
             historia_ulepszen.append(aktualny_level)
             continue
         indeks_szansy = (aktualny_level - 1) % 10 if rodzaj_przedmiotu == "talizman" else aktualny_level
@@ -89,6 +90,10 @@ def index():
                 error_message = "Startowy poziom nie może być ujemny."
             elif ilosc_prob <= 0:
                 error_message = "Ilość prób musi być większa od 0."
+            elif rodzaj_przedmiotu == "bron" and start_level >= 15:
+                error_message = "Maksymalny poziom ulepszenia wężowego ekwipunku to +15."
+            elif rodzaj_przedmiotu == "talizman" and start_level >= 200:
+                error_message = "Maksymalny poziom ulepszenia talizmanu to +200."    
 
             if error_message:
                 return render_template("index.html", wyniki=wyniki, start_level=start_level, ilosc_prob=ilosc_prob, rodzaj_przedmiotu=rodzaj_przedmiotu, rodzaj_zwoju=rodzaj_zwoju, ilosc_symulacji=ilosc_symulacji, error_message=error_message), 400
