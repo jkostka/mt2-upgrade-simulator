@@ -60,7 +60,7 @@ Live: https://catastroph1c.pythonanywhere.com
 Project is created with:
 * Python 3.12.5
 * Flask 3.1.0
-* HTML5, CSS
+* HTML5
   
 	
 ## Setup
