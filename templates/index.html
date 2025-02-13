@@ -113,6 +113,25 @@
         .links a:hover {
             text-decoration: underline;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -163,17 +182,28 @@
             <div class="results">
                 <h2>Podsumowanie:</h2>
                 <p><b>Startowy poziom ulepszenia przedmiotu: <span style="color: green; font-size: 1.2em;">+{{ wyniki.start }}</span></b></p>
-           <!--<p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Średnia_arytmetyczna" target="_blank">Średnia wartość</a>: <span style="color: blue; font-size: 1.2em;">+{{ wyniki.sredni|int }}</span></b></p>-->
                 <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Mediana" target="_blank">Mediana</a>: <span style="color: orange; font-size: 1.2em;">+{{ wyniki.mediana|int }}</span></b></p>
                 <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Dominanta_(statystyka)" target="_blank">Dominanta</a>: <span style="color: red; font-size: 1.2em;">+{{ wyniki.domina|int }}</span></b></p>
 
-                <h2>Szczegółowe wyniki na {{ wyniki.iloscsymulacji }} symulacji:</h2>
                 <h3>Liczba wystąpień każdego poziomu:</h3>
-                <ul>
-                    {% for level, liczba in wyniki.liczniki.items()|sort %}
-                        <li>+<span style="color: red;">{{ level }}</span>: {{ liczba }} razy</li>
-                    {% endfor %}
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Poziom końcowy</th>
+                            <th>Liczba wystąpień</th>
+                            <th>Procent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for level, liczba in wyniki.liczniki.items()|sort %}
+                            <tr>
+                                <td>+{{ level }}</td>
+                                <td>{{ liczba }}</td>
+                                <td>{{ (liczba / wyniki.iloscsymulacji * 100) | round(2) }}%</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <canvas id="myChart"></canvas>
             <script>
