@@ -43,8 +43,8 @@ def symuluj_ulepszanie(start_level, ilosc_prob, rodzaj_przedmiotu, rodzaj_zwoju)
     historia_ulepszen = [start_level]
 
     for _ in range(ilosc_prob):
-        if (rodzaj_przedmiotu == "bron" and aktualny_level >= 14) or \
-           (rodzaj_przedmiotu == "talizman" and aktualny_level >= 199):
+        if (rodzaj_przedmiotu == "bron" and aktualny_level >= 15) or \
+           (rodzaj_przedmiotu == "talizman" and aktualny_level >= 200):
             historia_ulepszen.append(aktualny_level)
             continue
         indeks_szansy = (aktualny_level - 1) % 10 if rodzaj_przedmiotu == "talizman" else aktualny_level
