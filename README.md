@@ -28,6 +28,8 @@ For talismans, the base chance is cyclical:
 +99 15%
 (...)
 +125 35%
+(...)
++200 10%
 
 For snake equipment, the base chances are as follows:
 
