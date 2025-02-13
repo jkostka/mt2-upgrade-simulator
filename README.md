@@ -68,8 +68,8 @@ Project is created with:
 To run this project perform the following steps
 
 ```
-$ pip install flask
-$ python ./app.py
+ pip install flask
+ python ./app.py
 ```
 
 ## Additional info
