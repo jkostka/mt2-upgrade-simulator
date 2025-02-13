@@ -2,7 +2,7 @@
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
-* [Additional info](#info)
+* [Additional info](#additional-info)
 
 ## General info
 This project is a simulator for upgrading talismans and snake equipment in the game Metin2.
@@ -72,5 +72,5 @@ $ pip install flask
 $ python ./app.py
 ```
 
-## Info
+## Additional info
 I am not a professional programmer, the code was written as a hobby with the help of AI tools. It is possible that it may contain syntax errors, but its operation is 100% correct.
