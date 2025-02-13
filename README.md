@@ -2,6 +2,7 @@
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
+* [Addition info](#info)
 
 ## General info
 This project is a simulator for upgrading talismans and snake equipment in the game Metin2.
@@ -70,3 +71,6 @@ To run this project perform the following steps
 $ pip install flask
 $ python ./app.py
 ```
+
+## Info
+I am not a professional programmer, the code was written as a hobby with the help of AI tools.
