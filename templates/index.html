@@ -146,34 +146,34 @@
             <h1>Symulator ulepszania</h1>
         </a>
 
-        <form method="POST" onsubmit="return walidujFormularz()">
+        <form method="POST" onsubmit="return validateForm()">
             {% if error_message %}
                 <p style="color: red;">{{ error_message }}</p>
             {% endif %}
 
-            <label for="rodzaj_przedmiotu">Wybierz rodzaj przedmiotu:</label>
-            <select name="rodzaj_przedmiotu" id="rodzaj_przedmiotu" onchange="pokazUkryjZwoj()">
-                <option value="proszę wybrać" {% if rodzaj_przedmiotu == "proszę wybrać" %}selected{% endif %}>Proszę wybrać</option>
-                <option value="talizman" {% if rodzaj_przedmiotu == "talizman" %}selected{% endif %}>Talizman</option>
-                <option value="bron" {% if rodzaj_przedmiotu == "bron" %}selected{% endif %}>Ekwipunek wężowy</option>
+            <label for="item_type">Wybierz rodzaj przedmiotu:</label>
+            <select name="item_type" id="item_type" onchange="showHideEnchantment()">
+                <option value="please_choice" {% if item_type == "please_choice" %}selected{% endif %}>Proszę wybrać</option>
+                <option value="talisman" {% if item_type == "talisman" %}selected{% endif %}>Talizman</option>
+                <option value="serpentEquipment" {% if item_type == "serpentEquipment" %}selected{% endif %}>Ekwipunek wężowy</option>
             </select>
 
             <label for="start_level">Aktualny poziom ulepszenia przedmiotu:</label>
             <input type="number" name="start_level" id="start_level" min="0" value="{{ start_level }}">
 
-            <label for="rodzaj_zwoju">Rodzaj zwoju:</label>
-            <select name="rodzaj_zwoju" id="rodzaj_zwoju" disabled>
-                <option value="proszę wybrać" {% if rodzaj_zwoju == "proszę wybrać" %}selected{% endif %}>Proszę wybrać</option>
-                <option value="magiczny kamień" {% if rodzaj_zwoju == "magiczny kamień" %}selected{% endif %}>Magiczny Kamień</option>
-                <option value="rytualny kamień" {% if rodzaj_zwoju == "rytualny kamień" %}selected{% endif %}>Rytualny Kamień</option>
-                <option value="pieczęć boga smoków" {% if rodzaj_zwoju == "pieczęć boga smoków" %}selected{% endif %}>Pieczęć Boga Smoków</option>
+            <label for="enchantment_type">Rodzaj zwoju:</label>
+            <select name="enchantment_type" id="enchantment_type" disabled>
+                <option value="please_choice" {% if enchantment_type == "please_choice" %}selected{% endif %}>Proszę wybrać</option>
+                <option value="magiczny kamień" {% if enchantment_type == "magiczny kamień" %}selected{% endif %}>Magiczny Kamień</option>
+                <option value="rytualny kamień" {% if enchantment_type == "rytualny kamień" %}selected{% endif %}>Rytualny Kamień</option>
+                <option value="pieczęć boga smoków" {% if enchantment_type == "pieczęć boga smoków" %}selected{% endif %}>Pieczęć Boga Smoków</option>
             </select>
 
-            <label for="ilosc_prob">Ilość zwojów:</label>
-            <input type="number" name="ilosc_prob" id="ilosc_prob" min="1" value="{{ ilosc_prob }}">
+            <label for="number_of_attempts">Ilość zwojów:</label>
+            <input type="number" name="number_of_attempts" id="number_of_attempts" min="1" value="{{ number_of_attempts }}">
 
-            <label for="ilosc_symulacji">Ilość symulacji (1-1000):</label>
-            <input type="number" name="ilosc_symulacji" id="ilosc_symulacji" min="1" max="1000" value="{{ ilosc_symulacji }}">
+            <label for="number_of_simulations">Ilość symulacji (1-1000):</label>
+            <input type="number" name="number_of_simulations" id="number_of_simulations" min="1" max="1000" value="{{ number_of_simulations }}">
 
             <input type="submit" value="Przeprowadź symulacje">
         </form>
@@ -185,7 +185,7 @@
                 <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Mediana" target="_blank">Mediana</a>: <span style="color: orange; font-size: 1.2em;">+{{ wyniki.mediana|int }}</span></b></p>
                 <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Dominanta_(statystyka)" target="_blank">Dominanta</a>: <span style="color: red; font-size: 1.2em;">+{{ wyniki.domina|int }}</span></b></p>
 
-                <h3>Szczegółowe dane:</h3>
+                <h3>Szczegółowe dane: </h3>
                 <table>
                     <thead>
                         <tr>
@@ -247,10 +247,10 @@
 
     <script>
         function pokazUkryjZwoj() {
-            const rodzajPrzedmiotu = document.getElementById('rodzaj_przedmiotu').value;
-            const rodzajZwoju = document.getElementById('rodzaj_zwoju');
-            rodzajZwoju.disabled = rodzajPrzedmiotu !== 'bron';
-            if (rodzajPrzedmiotu === 'talizman') {
+            const rodzajPrzedmiotu = document.getElementById('item_type').value;
+            const rodzajZwoju = document.getElementById('enchantment_type');
+            rodzajZwoju.disabled = rodzajPrzedmiotu !== 'serpentEquipment';
+            if (rodzajPrzedmiotu === 'talisman') {
                 rodzajZwoju.value = 'magiczny kamień';
             }
         }
