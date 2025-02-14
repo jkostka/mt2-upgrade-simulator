@@ -47,7 +47,7 @@ def start_simulate(start_level, number_of_attemps, item_type, scroll_type):
            (item_type == "talisman" and actual_level >= 200):
             upgrade_history.append(actual_level)
             continue
-        chance_index = (actual_level - 1) % 10 if item_type == "talisman" else actual_level
+        chance_index = actual_level % 10 if item_type == "talisman" else actual_level
         if isinstance(total_chance, dict):
             chance = total_chance.get(actual_level + 1, 0)
         else:

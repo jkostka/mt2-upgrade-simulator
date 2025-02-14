@@ -209,17 +209,54 @@
             <script>
                 {% if results %}
                     const ctx = document.getElementById('myChart').getContext('2d');
-                    const dominantIndex = Object.keys({{ results.counters }}).indexOf('{{ results.domina }}');
-                    const backgroundColors = Object.keys({{ results.counters }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)');
-                    const borderColors = Object.keys({{ results.counters }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)');
-
+            
+                    // Pobranie kluczy jako liczb (dla poprawnego porównania)
+                    const keys = Object.keys({{ results.counters }}).map(Number);
+            
+                    // Pobranie wartości jako liczby
+                    const medianaValue = Number('{{ results.mediana }}');
+                    const dominantaValue = Number('{{ results.domina }}');
+                    const startValue = Number('{{ results.start }}');
+            
+                    // Pobranie indeksów dla dominanta, mediany i startu
+                    const dominantIndex = keys.indexOf(dominantaValue);
+                    const medianIndex = keys.indexOf(medianaValue);
+                    const startIndex = keys.indexOf(startValue);
+            
+                    // Sprawdzenie, czy wartości są takie same
+                    const isMedianDominantSame = medianaValue === dominantaValue;
+                    const isStartDominantSame = startValue === dominantaValue;
+            
+                    // Debugowanie w konsoli
+                    console.log("Mediana:", medianaValue, "Indeks:", medianIndex);
+                    console.log("Dominanta:", dominantaValue, "Indeks:", dominantIndex);
+                    console.log("Start:", startValue, "Indeks:", startIndex);
+                    console.log("Dostępne klucze:", keys);
+                    console.log("Czy mediana i dominanta są takie same?", isMedianDominantSame);
+            
+                    // Tworzenie tablicy kolorów
+                    const backgroundColors = keys.map((_, i) => {
+                        if (i === dominantIndex) return 'rgba(255, 99, 132, 0.5)'; // Dominanta - czerwony
+                        if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 0.5)'; // Mediana - pomarańczowy
+                        if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 0.5)'; // Startowy poziom - zielony
+                        return 'rgba(54, 162, 235, 0.5)'; // Pozostałe wartości - niebieski
+                    });
+            
+                    const borderColors = keys.map((_, i) => {
+                        if (i === dominantIndex) return 'rgba(255, 99, 132, 1)'; // Dominanta - czerwony
+                        if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 1)'; // Mediana - pomarańczowy
+                        if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 1)'; // Startowy poziom - zielony
+                        return 'rgba(54, 162, 235, 1)'; // Pozostałe wartości - niebieski
+                    });
+            
+                    // Tworzenie wykresu
                     const myChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: [{% for level, number in results.counters.items()|sort %}'+{{ level }}',{% endfor %}],
+                            labels: keys.map(level => `+${level}`),
                             datasets: [{
                                 label: 'Liczba wystąpień',
-                                data: [{% for level, number in results.counters.items()|sort %}{{ number }},{% endfor %}],
+                                data: Object.values({{ results.counters }}),
                                 backgroundColor: backgroundColors,
                                 borderColor: borderColors,
                                 borderWidth: 1
