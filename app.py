@@ -15,7 +15,7 @@ def increase_chance(basic_chance, scroll_type):
     modificator = 0
     if scroll_type == "ritual_stone":
         modificator = 10
-    elif scroll_type == "dragon_god_seal":
+    elif scroll_type == "god_seal":
         modificator = 15
 
     if isinstance(basic_chance, list):
