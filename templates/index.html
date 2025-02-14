@@ -227,13 +227,6 @@
                     const isMedianDominantSame = medianaValue === dominantaValue;
                     const isStartDominantSame = startValue === dominantaValue;
             
-                    // Debugowanie w konsoli
-                    console.log("Mediana:", medianaValue, "Indeks:", medianIndex);
-                    console.log("Dominanta:", dominantaValue, "Indeks:", dominantIndex);
-                    console.log("Start:", startValue, "Indeks:", startIndex);
-                    console.log("Dostępne klucze:", keys);
-                    console.log("Czy mediana i dominanta są takie same?", isMedianDominantSame);
-            
                     // Tworzenie tablicy kolorów
                     const backgroundColors = keys.map((_, i) => {
                         if (i === dominantIndex) return 'rgba(255, 99, 132, 0.5)'; // Dominanta - czerwony
@@ -263,6 +256,26 @@
                             }]
                         },
                         options: {
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(tooltipItem) {
+                                            let label = `Liczba wystąpień: ${tooltipItem.raw}`;
+                                            const index = tooltipItem.dataIndex;
+            
+                                            if (index === dominantIndex) {
+                                                label += " (Dominanta)";
+                                            } else if (index === medianIndex && !isMedianDominantSame) {
+                                                label += " (Mediana)";
+                                            } else if (index === startIndex && !isStartDominantSame) {
+                                                label += " (Startowy poziom ulepszenia)";
+                                            }
+            
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
                             scales: {
                                 y: {
                                     beginAtZero: true,
