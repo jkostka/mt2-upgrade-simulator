@@ -146,44 +146,44 @@
             <h1>Symulator ulepszania</h1>
         </a>
 
-        <form method="POST" onsubmit="return walidujFormularz()">
+        <form method="POST" onsubmit="return valideForm()">
             {% if error_message %}
                 <p style="color: red;">{{ error_message }}</p>
             {% endif %}
 
-            <label for="rodzaj_przedmiotu">Wybierz rodzaj przedmiotu:</label>
-            <select name="rodzaj_przedmiotu" id="rodzaj_przedmiotu" onchange="pokazUkryjZwoj()">
-                <option value="proszę wybrać" {% if rodzaj_przedmiotu == "proszę wybrać" %}selected{% endif %}>Proszę wybrać</option>
-                <option value="talizman" {% if rodzaj_przedmiotu == "talizman" %}selected{% endif %}>Talizman</option>
-                <option value="bron" {% if rodzaj_przedmiotu == "bron" %}selected{% endif %}>Ekwipunek wężowy</option>
+            <label for="item_type">Wybierz rodzaj przedmiotu:</label>
+            <select name="item_type" id="item_type" onchange="showHideScroll()">
+                <option value="please_choice" {% if item_type == "please_choice" %}selected{% endif %}>Proszę wybrać</option>
+                <option value="talisman" {% if item_type == "talisman" %}selected{% endif %}>Talizman</option>
+                <option value="serpent_equipment" {% if item_type == "serpent_equipment" %}selected{% endif %}>Ekwipunek wężowy</option>
             </select>
 
             <label for="start_level">Aktualny poziom ulepszenia przedmiotu:</label>
             <input type="number" name="start_level" id="start_level" min="0" value="{{ start_level }}">
 
-            <label for="rodzaj_zwoju">Rodzaj zwoju:</label>
-            <select name="rodzaj_zwoju" id="rodzaj_zwoju" disabled>
-                <option value="proszę wybrać" {% if rodzaj_zwoju == "proszę wybrać" %}selected{% endif %}>Proszę wybrać</option>
-                <option value="magiczny kamień" {% if rodzaj_zwoju == "magiczny kamień" %}selected{% endif %}>Magiczny Kamień</option>
-                <option value="rytualny kamień" {% if rodzaj_zwoju == "rytualny kamień" %}selected{% endif %}>Rytualny Kamień</option>
-                <option value="pieczęć boga smoków" {% if rodzaj_zwoju == "pieczęć boga smoków" %}selected{% endif %}>Pieczęć Boga Smoków</option>
+            <label for="scroll_type">Rodzaj zwoju:</label>
+            <select name="scroll_type" id="scroll_type" disabled>
+                <option value="please_choice" {% if scroll_type == "please_choice" %}selected{% endif %}>Proszę wybrać</option>
+                <option value="magic_stone" {% if scroll_type == "magic_stone" %}selected{% endif %}>Magiczny Kamień</option>
+                <option value="ritual_stone" {% if scroll_type == "ritual_stone" %}selected{% endif %}>Rytualny Kamień</option>
+                <option value="dragon_god_seal" {% if scroll_type == "dragon_god_seal" %}selected{% endif %}>Pieczęć Boga Smoków</option>
             </select>
 
-            <label for="ilosc_prob">Ilość zwojów:</label>
-            <input type="number" name="ilosc_prob" id="ilosc_prob" min="1" value="{{ ilosc_prob }}">
+            <label for="number_of_attemps">Ilość zwojów:</label>
+            <input type="number" name="number_of_attemps" id="number_of_attemps" min="1" value="{{ number_of_attemps }}">
 
-            <label for="ilosc_symulacji">Ilość symulacji (1-1000):</label>
-            <input type="number" name="ilosc_symulacji" id="ilosc_symulacji" min="1" max="1000" value="{{ ilosc_symulacji }}">
+            <label for="number_of_simulations">Ilość symulacji (1-1000):</label>
+            <input type="number" name="number_of_simulations" id="number_of_simulations" min="1" max="1000" value="{{ number_of_simulations }}">
 
             <input type="submit" value="Przeprowadź symulacje">
         </form>
 
-        {% if wyniki %}
+        {% if results %}
             <div class="results">
                 <h2>Podsumowanie:</h2>
-                <p><b>Startowy poziom ulepszenia przedmiotu: <span style="color: green; font-size: 1.2em;">+{{ wyniki.start }}</span></b></p>
-                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Mediana" target="_blank">Mediana</a>: <span style="color: orange; font-size: 1.2em;">+{{ wyniki.mediana|int }}</span></b></p>
-                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Dominanta_(statystyka)" target="_blank">Dominanta</a>: <span style="color: red; font-size: 1.2em;">+{{ wyniki.domina|int }}</span></b></p>
+                <p><b>Startowy poziom ulepszenia przedmiotu: <span style="color: green; font-size: 1.2em;">+{{ results.start }}</span></b></p>
+                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Mediana" target="_blank">Mediana</a>: <span style="color: orange; font-size: 1.2em;">+{{ results.mediana|int }}</span></b></p>
+                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Dominanta_(statystyka)" target="_blank">Dominanta</a>: <span style="color: red; font-size: 1.2em;">+{{ results.domina|int }}</span></b></p>
 
                 <h3>Liczba wystąpień każdego poziomu:</h3>
                 <table>
@@ -195,11 +195,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for level, liczba in wyniki.liczniki.items()|sort %}
+                        {% for level, number in results.counters.items()|sort %}
                             <tr>
                                 <td>+{{ level }}</td>
-                                <td>{{ liczba }}</td>
-                                <td>{{ (liczba / wyniki.iloscsymulacji * 100) | round(2) }}%</td>
+                                <td>{{ number }}</td>
+                                <td>{{ (number / results.number_of_simulations * 100) | round(1) }}%</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -207,19 +207,19 @@
             </div>
             <canvas id="myChart"></canvas>
             <script>
-                {% if wyniki %}
+                {% if results %}
                     const ctx = document.getElementById('myChart').getContext('2d');
-                    const dominantIndex = Object.keys({{ wyniki.liczniki }}).indexOf('{{ wyniki.domina }}');
-                    const backgroundColors = Object.keys({{ wyniki.liczniki }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)');
-                    const borderColors = Object.keys({{ wyniki.liczniki }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)');
+                    const dominantIndex = Object.keys({{ results.counters }}).indexOf('{{ results.domina }}');
+                    const backgroundColors = Object.keys({{ results.counters }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)');
+                    const borderColors = Object.keys({{ results.counters }}).map((_, i) => i === dominantIndex ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)');
 
                     const myChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: [{% for level, liczba in wyniki.liczniki.items()|sort %}'+{{ level }}',{% endfor %}],
+                            labels: [{% for level, number in results.counters.items()|sort %}'+{{ level }}',{% endfor %}],
                             datasets: [{
                                 label: 'Liczba wystąpień',
-                                data: [{% for level, liczba in wyniki.liczniki.items()|sort %}{{ liczba }},{% endfor %}],
+                                data: [{% for level, number in results.counters.items()|sort %}{{ number }},{% endfor %}],
                                 backgroundColor: backgroundColors,
                                 borderColor: borderColors,
                                 borderWidth: 1
@@ -246,17 +246,17 @@
     </div>
 
     <script>
-        function pokazUkryjZwoj() {
-            const rodzajPrzedmiotu = document.getElementById('rodzaj_przedmiotu').value;
-            const rodzajZwoju = document.getElementById('rodzaj_zwoju');
-            rodzajZwoju.disabled = rodzajPrzedmiotu !== 'bron';
-            if (rodzajPrzedmiotu === 'talizman') {
-                rodzajZwoju.value = 'magiczny kamień';
+        function showHideScroll() {
+            const itemType = document.getElementById('item_type').value;
+            const scrollType = document.getElementById('scroll_type');
+            scrollType.disabled = itemType !== 'serpent_equipment';
+            if (itemType === 'talisman') {
+                scrollType.value = 'magic_stone';
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            pokazUkryjZwoj();
+            showHideScroll();
         });
     </script>
 </body>
