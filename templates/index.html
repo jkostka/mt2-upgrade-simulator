@@ -2,9 +2,13 @@
 <html>
 <head>
     <title>Symulator ulepszania by Catastroph1c</title>
-    <link rel="icon" type="image/png" href="https://i.imgur.com/t8RwR2f.png" sizes="96x96" />
-    <link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/sKc6iBs.png" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon-96x96.png') }}" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/icons/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/icons/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='images/icons/site.webmanifest') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -137,7 +141,7 @@
 <body>
     <header>
         <a href="https://www.youtube.com/@Catastroph1c" target="_blank">
-            <img src="https://yt3.googleusercontent.com/mJwYi-IgBj5kDOZlG70QhaLhl5gVbCbxMR5h1mhoHROBfoCkIBR5niXIaD4DVkeiUZJ1heNMJA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" alt="Logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
         </a>
     </header>
 
@@ -209,24 +213,24 @@
             <script>
                 {% if results %}
                     const ctx = document.getElementById('myChart').getContext('2d');
-            
+
                     // Pobranie kluczy jako liczb (dla poprawnego porównania)
                     const keys = Object.keys({{ results.counters }}).map(Number);
-            
+
                     // Pobranie wartości jako liczby
                     const medianaValue = Number('{{ results.mediana }}');
                     const dominantaValue = Number('{{ results.domina }}');
                     const startValue = Number('{{ results.start }}');
-            
+
                     // Pobranie indeksów dla dominanta, mediany i startu
                     const dominantIndex = keys.indexOf(dominantaValue);
                     const medianIndex = keys.indexOf(medianaValue);
                     const startIndex = keys.indexOf(startValue);
-            
+
                     // Sprawdzenie, czy wartości są takie same
                     const isMedianDominantSame = medianaValue === dominantaValue;
                     const isStartDominantSame = startValue === dominantaValue;
-            
+
                     // Tworzenie tablicy kolorów
                     const backgroundColors = keys.map((_, i) => {
                         if (i === dominantIndex) return 'rgba(255, 99, 132, 0.5)'; // Dominanta - czerwony
@@ -234,14 +238,14 @@
                         if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 0.5)'; // Startowy poziom - zielony
                         return 'rgba(54, 162, 235, 0.5)'; // Pozostałe wartości - niebieski
                     });
-            
+
                     const borderColors = keys.map((_, i) => {
                         if (i === dominantIndex) return 'rgba(255, 99, 132, 1)'; // Dominanta - czerwony
                         if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 1)'; // Mediana - pomarańczowy
                         if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 1)'; // Startowy poziom - zielony
                         return 'rgba(54, 162, 235, 1)'; // Pozostałe wartości - niebieski
                     });
-            
+
                     // Tworzenie wykresu
                     const myChart = new Chart(ctx, {
                         type: 'bar',
@@ -262,7 +266,7 @@
                                         label: function(tooltipItem) {
                                             let label = `Liczba wystąpień: ${tooltipItem.raw}`;
                                             const index = tooltipItem.dataIndex;
-            
+
                                             if (index === dominantIndex) {
                                                 label += " (Dominanta - najczęściej pojawiającą się wartość.)";
                                             } else if (index === medianIndex && !isMedianDominantSame) {
@@ -270,7 +274,7 @@
                                             } else if (index === startIndex && !isStartDominantSame) {
                                                 label += " (Startowy poziom ulepszenia)";
                                             }
-            
+
                                             return label;
                                         }
                                     }
@@ -289,9 +293,9 @@
         {% endif %}
 
         <div class="links">
-            <a href="https://tipply.pl/@catastroph1c">Wsparcie twórcy</a>
-            <a href="https://www.youtube.com/@Catastroph1c">Kanał YouTube</a>
-            <a href="https://i.imgur.com/8P4VyuG.gif">Cennik żywiołów/zestawów</a>
+            <a href="https://tipply.pl/@catastroph1c" target="_blank">Wsparcie twórcy</a>
+            <a href="https://www.youtube.com/@Catastroph1c" target="_blank">Kanał YouTube</a>
+            <a href="{{ url_for('static', filename='images/cennik.gif') }}" target="_blank">Cennik żywiołów/zestawów</a>
         </div>
     </div>
 
