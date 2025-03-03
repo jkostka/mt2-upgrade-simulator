@@ -33,7 +33,7 @@ header a {
 }
 
 header img {
-    max-width: 65%;
+    max-width: 100%;
     height: auto;
     display: block;
     margin: auto;
