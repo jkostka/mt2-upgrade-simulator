@@ -33,12 +33,15 @@ header a {
 }
 
 header img {
-    max-width: 100%;
+    max-width: 65%;
     height: auto;
-    max-height: 80px;
+    display: block;
+    margin: auto;
+    object-fit: contain;
 }
 
-h1 {
+
+.container h1 {
     font-size: 1.5rem;
     color: #1a202c;
     text-align: center;
