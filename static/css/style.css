@@ -126,3 +126,77 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+
+#tabela_zywioly th, #tabela_zywioly td, #tabela_zestawy th, #tabela_zestawy td
+{
+    border-style:groove;
+    border-width: thin;
+    border-collapse: collapse;
+    border-color:black;
+    text-align: center;
+    width:300px;
+}
+
+#tabela_zywioly th, #tabela_zestawy th
+{
+    background-color: #2563eb;
+    color: white;
+}
+
+#akapit_nad_obrazkami
+{
+    font-weight: bold;
+    font-size: medium;
+    text-align: center;
+ 
+}
+
+#tabela_efekty td
+{
+    font-weight: bold;
+    border-style: none;
+    text-align: center;
+    table-layout: fixed;
+}
+
+#tabela_efekty td
+{
+    width: 33%;
+}
+
+#tabela_efekty img
+{
+  width: 100%;
+  height: auto; /* Utrzymuje proporcje obrazka */
+  object-fit: cover; /* Jeśli chcesz, aby obrazek wypełniał całą komórkę */
+
+}
+
+#tabela_zywioly img
+{
+    width: 18px;
+    height: 18px;
+}
+#tabela_zestawy img
+{
+    width: 20px;
+    height: 20px;   
+}
+
+#przycisk_powrot 
+{
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #d2d6dc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+#przycisk_powrot:hover
+{
+    background-color: #1e40af;
+}

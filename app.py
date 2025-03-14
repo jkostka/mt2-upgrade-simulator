@@ -1,8 +1,13 @@
 from flask import Flask, request, render_template
+from flask import Flask, redirect, url_for
 import random
 import statistics
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
+
+@app.route('/cennik')
+def cennik():
+    return app.send_static_file('sites/cennik.html')
 
 # Inicjalizacja wartości poza funkcją index
 start_level = 0
@@ -93,7 +98,7 @@ def index():
             elif item_type == "serpent_equipment" and start_level >= 15:
                 error_message = "Maksymalny poziom ulepszenia wężowego ekwipunku to +15."
             elif item_type == "talisman" and start_level >= 200:
-                error_message = "Maksymalny poziom ulepszenia talizmanu to +200."    
+                error_message = "Maksymalny poziom ulepszenia talizmanu to +200."
 
             if error_message:
                 return render_template("index.html", results=results, start_level=start_level, number_of_attemps=number_of_attemps, item_type=item_type, scroll_type=scroll_type, number_of_simulations=number_of_simulations, error_message=error_message), 400
@@ -132,6 +137,7 @@ def index():
             return render_template("index.html", results=results, start_level=start_level, number_of_attemps=number_of_attemps, item_type=item_type, scroll_type=scroll_type, number_of_simulations=number_of_simulations, error_message=error_message), 400
 
     return render_template("index.html", results=results, start_level=start_level, number_of_attemps=number_of_attemps, item_type=item_type, scroll_type=scroll_type, number_of_simulations=number_of_simulations, error_message=error_message)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
