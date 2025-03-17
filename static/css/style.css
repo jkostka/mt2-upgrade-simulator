@@ -20,6 +20,27 @@ body {
     box-sizing: border-box;
 }
 
+.container_cennik {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 750px;
+    width: 95%;
+    box-sizing: border-box;
+}
+
+.container_kontakt {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 750px;
+    width: 95%;
+    box-sizing: border-box;
+}
+
+
 header {
     width: 100%;
     display: flex;
@@ -42,6 +63,20 @@ header img {
 
 
 .container h1 {
+    font-size: 1.5rem;
+    color: #1a202c;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container_cennik h1 {
+    font-size: 1.5rem;
+    color: #1a202c;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container_kontakt h1 {
     font-size: 1.5rem;
     color: #1a202c;
     text-align: center;
@@ -104,6 +139,13 @@ canvas {
     font-size: 0.9rem;
 }
 
+.links a:visited {
+    color: #2563eb;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 0.9rem;
+}
+
 .links a:hover {
     text-decoration: underline;
 }
@@ -116,6 +158,10 @@ table {
 
 table, th, td {
     border: 1px solid #ddd;
+}
+
+.container_cennik table {
+    border: none;
 }
 
 th, td {
@@ -143,12 +189,22 @@ th {
     color: white;
 }
 
+#tabela_zywioly th:hover
+{
+    background-color: #1e40af;
+}
+
+#tabela_zestawy th:hover
+{
+    background-color: #1e40af;
+}
+
 #akapit_nad_obrazkami
 {
     font-weight: bold;
     font-size: medium;
     text-align: center;
- 
+
 }
 
 #tabela_efekty td
@@ -166,7 +222,7 @@ th {
 
 #tabela_efekty img
 {
-  width: 100%;
+  max-width: 100%;
   height: auto; /* Utrzymuje proporcje obrazka */
   object-fit: cover; /* Jeśli chcesz, aby obrazek wypełniał całą komórkę */
 
@@ -180,10 +236,10 @@ th {
 #tabela_zestawy img
 {
     width: 20px;
-    height: 20px;   
+    height: 20px;
 }
 
-#przycisk_powrot 
+#przycisk_powrot
 {
     width: 100%;
     padding: 10px;
@@ -199,4 +255,20 @@ th {
 #przycisk_powrot:hover
 {
     background-color: #1e40af;
+}
+
+.jezyk a img
+{
+border-style:groove;
+border-radius: 30%;
+border-width: 1px;
+border-color: #1a202c;
+display:inline-block;
+vertical-align: text-bottom;
+}
+
+.jezyk
+{
+    font-size: x-large;
+    text-align: center;
 }

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Upgrade simulator by Catastroph1c</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon-96x96.png') }}" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/icons/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/icons/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='images/icons/site.webmanifest') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+       <!-- <a href="https://www.youtube.com/@Catastroph1c" target="_blank"> /-->
+            <img src="/static/images/logo.png" alt="Logo">
+        </a>
+    </header>
+
+    <div class="container">
+        <!-- <a href="https://www.youtube.com/@Catastroph1c" target="_blank" style="text-decoration: none; color: inherit;"> /-->
+            <h1>Upgrade simulator</h1>
+
+            <p class="jezyk"><a href="/"><img src="/static/images/icons/PL.png" alt=pl_flag.png" style="width:25px;height:20px;"></a> <b>|</b> <a href="/en"><img src="/static/images/icons/GB.png" alt="en_flag.png" style="width:25px;height:20px;"></a>
+            </p>
+
+        <form method="POST" onsubmit="return valideForm()">
+            {% if error_message %}
+                <i><p style="color: red;">{{ error_message }}</p></i>
+            {% endif %}
+
+            <label for="item_type">Select item type:</label>
+            <select name="item_type" id="item_type" onchange="showHideScroll()">
+                <option value="please_choice" {% if item_type == "please_choice" %}selected{% endif %}>Please choice</option>
+                <option value="talisman" {% if item_type == "talisman" %}selected{% endif %}>Talisman</option>
+                <option value="serpent_equipment" {% if item_type == "serpent_equipment" %}selected{% endif %}>Serpent equipment</option>
+            </select>
+
+            <label for="start_level" title="For talisman in the range 0-199, for snake equipment 0-14.">Current item upgrade level:</label>
+            <input type="number" title="For talisman in the range 0-199, for snake equipment 0-14." name="start_level" id="start_level" min="0" value="{{ start_level }}">
+
+            <label for="scroll_type" title="Ritual stones and god seals are only available for snake equipment.">Scroll type:</label>
+            <select title="Ritual stones and god seals are only available for snake equipment." name="scroll_type" id="scroll_type" disabled>
+                <option value="please_choice" {% if scroll_type == "please_choice" %}selected{% endif %}>Please choice</option>
+                <option title="base chances - data comes from metin2alerts.com" value="magic_stone" {% if scroll_type == "magic_stone" %}selected{% endif %}>Magic stone</option>
+                <option title="+10% to basic chance" value="ritual_stone" {% if scroll_type == "ritual_stone" %}selected{% endif %}>Ritual stone</option>
+                <option title="+15% to basic chance" value="god_seal" {% if scroll_type == "god_seal" %}selected{% endif %}>God seal</option>
+            </select>
+
+            <label for="number_of_attemps">Number of scrolls:</label>
+            <input type="number" name="number_of_attemps" id="number_of_attemps" min="1" value="{{ number_of_attemps }}">
+
+            <label title="The simulation will be performed the indicated number of times. The more simulations, the more accurate the probability distribution." for="number_of_simulations">Number of simulations (1-1000):</label>
+            <input title="The simulation will be performed the indicated number of times. The more simulations, the more accurate the probability distribution." type="number" name="number_of_simulations" id="number_of_simulations" min="1" max="1000" value="{{ number_of_simulations }}">
+
+            <input type="submit" value="Simulate now">
+        </form>
+
+        {% if results %}
+            <div class="results">
+                <h2>Summary:</h2>
+                <p><b>Start level: <span style="color: green; font-size: 1.2em;">+{{ results.start }}</span></b></p>
+                <p><b><a class="clickable" href="https://en.wikipedia.org/wiki/Median" target="_blank">Median</a>: <span style="color: orange; font-size: 1.2em;">+{{ results.mediana|int }}</span></b></p>
+                <p><b><a class="clickable" href="https://en.wikipedia.org/wiki/Mode_(statistics)" target="_blank">Mode</a>: <span style="color: red; font-size: 1.2em;">+{{ results.domina|int }}</span></b></p>
+
+                <h3>Number of occurrences of each level:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>End level</th>
+                            <th>Number of attemps</th>
+                            <th>Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for level, number in results.counters.items()|sort %}
+                            <tr>
+                                <td>+{{ level }}</td>
+                                <td>{{ number }}</td>
+                                <td>{{ (number / results.number_of_simulations * 100) | round(1) }}%</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <canvas id="myChart"></canvas>
+            <script>
+                {% if results %}
+                    const ctx = document.getElementById('myChart').getContext('2d');
+
+                    // Pobranie kluczy jako liczb (dla poprawnego porównania)
+                    const keys = Object.keys({{ results.counters }}).map(Number);
+
+                    // Pobranie wartości jako liczby
+                    const medianaValue = Number('{{ results.mediana }}');
+                    const dominantaValue = Number('{{ results.domina }}');
+                    const startValue = Number('{{ results.start }}');
+
+                    // Pobranie indeksów dla dominanta, mediany i startu
+                    const dominantIndex = keys.indexOf(dominantaValue);
+                    const medianIndex = keys.indexOf(medianaValue);
+                    const startIndex = keys.indexOf(startValue);
+
+                    // Sprawdzenie, czy wartości są takie same
+                    const isMedianDominantSame = medianaValue === dominantaValue;
+                    const isStartDominantSame = startValue === dominantaValue;
+
+                    // Tworzenie tablicy kolorów
+                    const backgroundColors = keys.map((_, i) => {
+                        if (i === dominantIndex) return 'rgba(255, 99, 132, 0.5)'; // Dominanta - czerwony
+                        if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 0.5)'; // Mediana - pomarańczowy
+                        if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 0.5)'; // Startowy poziom - zielony
+                        return 'rgba(54, 162, 235, 0.5)'; // Pozostałe wartości - niebieski
+                    });
+
+                    const borderColors = keys.map((_, i) => {
+                        if (i === dominantIndex) return 'rgba(255, 99, 132, 1)'; // Dominanta - czerwony
+                        if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 1)'; // Mediana - pomarańczowy
+                        if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 1)'; // Startowy poziom - zielony
+                        return 'rgba(54, 162, 235, 1)'; // Pozostałe wartości - niebieski
+                    });
+
+                    // Tworzenie wykresu
+                    const myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: keys.map(level => `+${level}`),
+                            datasets: [{
+                                label: 'Liczba wystąpień',
+                                data: Object.values({{ results.counters }}),
+                                backgroundColor: backgroundColors,
+                                borderColor: borderColors,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(tooltipItem) {
+                                            let label = `Number of attemps: ${tooltipItem.raw}`;
+                                            const index = tooltipItem.dataIndex;
+
+                                            if (index === dominantIndex) {
+                                                label += " (Mode - the most frequently appearing value.)";
+                                            } else if (index === medianIndex && !isMedianDominantSame) {
+                                                label += " (Median - middle value.)";
+                                            } else if (index === startIndex && !isStartDominantSame) {
+                                                label += " (Starting upgrade level)";
+                                            }
+
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    precision: 0
+                                }
+                            }
+                        }
+                    });
+                {% endif %}
+            </script>
+        {% endif %}
+
+        <div class="links">
+            <a href="/kontakt">Contact</a>
+            <a href="https://tipply.pl/@catastroph1c" target="_blank">Donate me</a>
+            <a href="https://www.youtube.com/@Catastroph1c" target="_blank">YouTube Channel</a>
+        </div>
+    </div>
+
+    <script>
+        function showHideScroll() {
+            const itemType = document.getElementById('item_type').value;
+            const scrollType = document.getElementById('scroll_type');
+            scrollType.disabled = itemType !== 'serpent_equipment';
+            if (itemType === 'talisman') {
+                scrollType.value = 'magic_stone';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showHideScroll();
+        });
+    </script>
+</body>
+</html>

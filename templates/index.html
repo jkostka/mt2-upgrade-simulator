@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
     <title>Symulator ulepszania by Catastroph1c</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icons/favicon-96x96.png') }}" sizes="96x96">
@@ -21,9 +21,10 @@
     <div class="container">
         <!-- <a href="https://www.youtube.com/@Catastroph1c" target="_blank" style="text-decoration: none; color: inherit;"> /-->
             <h1>Symulator ulepszania</h1>
-        </a>
 
-        <form method="POST" onsubmit="return valideForm()">
+            <p class="jezyk"><a href="/"><img src="/static/images/icons/PL.png" alt=pl_flag.png" style="width:25px;height:20px;"></a> <b>|</b> <a href="/en"><img src="/static/images/icons/GB.png" alt="en_flag.png" style="width:25px;height:20px;"></a></p>
+       
+            <form method="POST" onsubmit="return valideForm()">
             {% if error_message %}
                 <i><p style="color: red;">{{ error_message }}</p></i>
             {% endif %}
@@ -166,6 +167,7 @@
         {% endif %}
 
         <div class="links">
+            <a href="/kontakt">Kontakt</a>
             <a href="https://tipply.pl/@catastroph1c" target="_blank">Wsparcie twórcy</a>
             <a href="https://www.youtube.com/@Catastroph1c" target="_blank">Kanał YouTube</a>
             <a href="/cennik">Cennik żywiołów/zestawów</a>

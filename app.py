@@ -9,6 +9,10 @@ app = Flask(__name__, static_folder="static")
 def cennik():
     return app.send_static_file('sites/cennik.html')
 
+@app.route('/kontakt')
+def kontakt():
+    return app.send_static_file('sites/kontakt.html')
+
 # Inicjalizacja wartości poza funkcją index
 start_level = 0
 number_of_attemps = 0
@@ -138,6 +142,73 @@ def index():
 
     return render_template("index.html", results=results, start_level=start_level, number_of_attemps=number_of_attemps, item_type=item_type, scroll_type=scroll_type, number_of_simulations=number_of_simulations, error_message=error_message)
 
+@app.route("/en", methods=["GET", "POST"])
+def index_en():
+    global start_level, number_of_attemps, item_type, scroll_type, number_of_simulations
+
+    results = None
+    error_message = None
+
+    if request.method == "POST":
+        try:
+            item_type = request.form.get("item_type")
+            start_level = int(request.form.get("start_level"))
+            number_of_attemps = int(request.form.get("number_of_attemps"))
+            scroll_type = request.form.get("scroll_type")
+            number_of_simulations = int(request.form.get("number_of_simulations"))
+
+            if item_type == "please_choice":
+                error_message = "Please select an item type."
+            elif item_type == "serpent_equipment" and scroll_type == "please_choice":
+                error_message = "Please select a scroll type for the weapon."
+            elif not 1 <= number_of_simulations <= 1000:
+                error_message = "The number of simulations must be between 1 and 1000."
+            elif start_level < 0:
+                error_message = "The starting level cannot be negative."
+            elif number_of_attemps <= 0:
+                error_message = "The number of attempts must be greater than 0."
+            elif item_type == "serpent_equipment" and start_level >= 15:
+                error_message = "The maximum upgrade level for serpent equipment is +15."
+            elif item_type == "talisman" and start_level >= 200:
+                error_message = "The maximum upgrade level for a talisman is +200."
+
+            if error_message:
+                return render_template("index_en.html", results=results, start_level=start_level, number_of_attemps=number_of_attemps, item_type=item_type, scroll_type=scroll_type, number_of_simulations=number_of_simulations, error_message=error_message), 400
+
+            end_levels = []
+            for _ in range(number_of_simulations):
+                end_level, _ = start_simulate(start_level, number_of_attemps, item_type, scroll_type)
+                if end_level is None:
+                    return "Invalid item type", 400
+                end_levels.append(end_level)
+
+            average = statistics.mean(end_levels)
+            mediana = statistics.median(end_levels)
+            try:
+                domina = statistics.mode(end_levels)
+            except statistics.StatisticsError:
+                domina = "No clear mode"
+
+            level_counters = {}
+            for level in end_levels:
+                level_counters[level] = level_counters.get(level, 0) + 1
+
+            results = {
+                "average": average,
+                "mediana": mediana,
+                "domina": domina,
+                "start": start_level,
+                "attemps": number_of_attemps,
+                "item_type": item_type,
+                "scroll_type": scroll_type,
+                "counters": level_counters,
+                "number_of_simulations": number_of_simulations
+            }
+        except ValueError:
+            error_message = "Please enter valid numerical data."
+            return render_template("index_en.html", results=results, start_level=start_level, number_of_attemps=number_of_attemps, item_type=item_type, scroll_type=scroll_type, number_of_simulations=number_of_simulations, error_message=error_message), 400
+
+    return render_template("index_en.html", results=results, start_level=start_level, number_of_attemps=number_of_attemps, item_type=item_type, scroll_type=scroll_type, number_of_simulations=number_of_simulations, error_message=error_message)
 
 if __name__ == "__main__":
     app.run(debug=True)
