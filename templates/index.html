@@ -20,10 +20,14 @@
 
     <div class="container">
         <!-- <a href="https://www.youtube.com/@Catastroph1c" target="_blank" style="text-decoration: none; color: inherit;"> /-->
-            <h1>Symulator ulepszania</h1>
+        <h1>Symulator ulepszania<div class="info-container">
+                <label for="info" class="info-button"><img src="/static/images/icons/info.png" alt="" width="20px"></label>
+                <input type="checkbox" id="info" class="info-checkbox">
+                <div class="tooltip">Projekt ten pozwala na przeprowadzenie symulacji wężowego ekwpipunku oraz talizmanów - w wyniku tego otrzymujemy rozkład prawdopodobieństwa wystąpienia poszczególnych poziomów. Szanse bazowe pochodzą ze strony metin2alerts.com.</div>
+            </div></h1>
 
             <p class="jezyk"><a href="/"><img src="/static/images/icons/PL.png" alt=pl_flag.png" style="width:25px;height:20px;"></a> <b>|</b> <a href="/en"><img src="/static/images/icons/GB.png" alt="en_flag.png" style="width:25px;height:20px;"></a></p>
-       
+
             <form method="POST" onsubmit="return valideForm()">
             {% if error_message %}
                 <i><p style="color: red;">{{ error_message }}</p></i>
@@ -61,7 +65,7 @@
                 <h2>Podsumowanie:</h2>
                 <p><b>Startowy poziom ulepszenia przedmiotu: <span style="color: green; font-size: 1.2em;">+{{ results.start }}</span></b></p>
                 <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Mediana" target="_blank">Mediana</a>: <span style="color: orange; font-size: 1.2em;">+{{ results.mediana|int }}</span></b></p>
-                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Dominanta_(statystyka)" target="_blank">Dominanta</a>: <span style="color: red; font-size: 1.2em;">+{{ results.domina|int }}</span></b></p>
+                <p><b><a class="clickable" href="https://pl.wikipedia.org/wiki/Dominanta_(statystyka)" target="_blank">Domina</a>: <span style="color: red; font-size: 1.2em;">+{{ results.domina|int }}</span></b></p>
 
                 <h3>Liczba wystąpień każdego poziomu:</h3>
                 <table>
@@ -86,91 +90,127 @@
             <canvas id="myChart"></canvas>
             <script>
                 {% if results %}
-                    const ctx = document.getElementById('myChart').getContext('2d');
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const ctx = document.getElementById('myChart').getContext('2d');
 
-                    // Pobranie kluczy jako liczb (dla poprawnego porównania)
-                    const keys = Object.keys({{ results.counters }}).map(Number);
+                        const results = {{ results | tojson }};
+                        if (!results || !results.counters) {
+                            console.error("Brak danych w results.counters");
+                            return;
+                        }
 
-                    // Pobranie wartości jako liczby
-                    const medianaValue = Number('{{ results.mediana }}');
-                    const dominantaValue = Number('{{ results.domina }}');
-                    const startValue = Number('{{ results.start }}');
+                        const keys = Object.keys(results.counters).map(Number);
+                        const values = Object.values(results.counters);
 
-                    // Pobranie indeksów dla dominanta, mediany i startu
-                    const dominantIndex = keys.indexOf(dominantaValue);
-                    const medianIndex = keys.indexOf(medianaValue);
-                    const startIndex = keys.indexOf(startValue);
+                        const medianaValue = Number(results.mediana);
+                        const dominantaValue = Number(results.domina);
+                        const startValue = Number(results.start);
 
-                    // Sprawdzenie, czy wartości są takie same
-                    const isMedianDominantSame = medianaValue === dominantaValue;
-                    const isStartDominantSame = startValue === dominantaValue;
+                        const dominantIndex = keys.indexOf(dominantaValue);
+                        const medianIndex = keys.indexOf(medianaValue);
+                        const startIndex = keys.indexOf(startValue);
 
-                    // Tworzenie tablicy kolorów
-                    const backgroundColors = keys.map((_, i) => {
-                        if (i === dominantIndex) return 'rgba(255, 99, 132, 0.5)'; // Dominanta - czerwony
-                        if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 0.5)'; // Mediana - pomarańczowy
-                        if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 0.5)'; // Startowy poziom - zielony
-                        return 'rgba(54, 162, 235, 0.5)'; // Pozostałe wartości - niebieski
-                    });
+                        const isMedianDominantSame = medianaValue === dominantaValue;
+                        const isStartDominantSame = startValue === dominantaValue;
 
-                    const borderColors = keys.map((_, i) => {
-                        if (i === dominantIndex) return 'rgba(255, 99, 132, 1)'; // Dominanta - czerwony
-                        if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 1)'; // Mediana - pomarańczowy
-                        if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 1)'; // Startowy poziom - zielony
-                        return 'rgba(54, 162, 235, 1)'; // Pozostałe wartości - niebieski
-                    });
+                        const backgroundColors = keys.map((_, i) => {
+                            if (i === dominantIndex) return 'rgba(255, 99, 132, 0.8)'; // Czerwony dla dominanty
+                            if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 0.8)'; // Pomarańczowy dla mediany
+                            if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 0.8)'; // Zielony dla startowego poziomu
+                            return 'rgba(54, 162, 235, 0.5)'; // Niebieski dla pozostałych
+                        });
 
-                    // Tworzenie wykresu
-                    const myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: keys.map(level => `+${level}`),
-                            datasets: [{
-                                label: 'Liczba wystąpień',
-                                data: Object.values({{ results.counters }}),
-                                backgroundColor: backgroundColors,
-                                borderColor: borderColors,
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            plugins: {
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            let label = `Liczba wystąpień: ${tooltipItem.raw}`;
-                                            const index = tooltipItem.dataIndex;
+                        const borderColors = keys.map((_, i) => {
+                            if (i === dominantIndex) return 'rgba(255, 99, 132, 1)';
+                            if (i === medianIndex && !isMedianDominantSame) return 'rgba(255, 165, 0, 1)';
+                            if (i === startIndex && !isStartDominantSame) return 'rgba(0, 128, 0, 1)';
+                            return 'rgba(54, 162, 235, 1)';
+                        });
 
-                                            if (index === dominantIndex) {
-                                                label += " (Dominanta - najczęściej pojawiającą się wartość.)";
-                                            } else if (index === medianIndex && !isMedianDominantSame) {
-                                                label += " (Mediana - środkowa wartość.)";
-                                            } else if (index === startIndex && !isStartDominantSame) {
-                                                label += " (Startowy poziom ulepszenia)";
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: keys.map(level => `+${level}`),
+                                datasets: [{
+                                    label: 'Pozostałe wystąpienia',
+                                    data: values,
+                                    backgroundColor: backgroundColors,
+                                    borderColor: borderColors,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        labels: {
+                                            generateLabels: function(chart) {
+                                                return [
+                                                    {
+                                                        text: 'Startowy lvl',
+                                                        fillStyle: 'rgba(0, 128, 0, 0.8)',
+                                                        strokeStyle: 'rgba(0, 128, 0, 1)',
+                                                        lineWidth: 1
+                                                    },
+                                                    {
+                                                        text: 'Mediana',
+                                                        fillStyle: 'rgba(255, 165, 0, 0.8)',
+                                                        strokeStyle: 'rgba(255, 165, 0, 1)',
+                                                        lineWidth: 1
+                                                    },
+                                                    {
+                                                        text: 'Domina',
+                                                        fillStyle: 'rgba(255, 99, 132, 0.8)',
+                                                        strokeStyle: 'rgba(255, 99, 132, 1)',
+                                                        lineWidth: 1
+                                                    },
+                                                    {
+                                                        text: 'Inne',
+                                                        fillStyle: 'rgba(54, 162, 235, 0.5)',
+                                                        strokeStyle: 'rgba(54, 162, 235, 1)',
+                                                        lineWidth: 1
+                                                    }
+                                                ];
                                             }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(tooltipItem) {
+                                                let label = `Liczba wystąpień: ${tooltipItem.raw}`;
+                                                const index = tooltipItem.dataIndex;
 
-                                            return label;
+                                                if (index === dominantIndex) {
+                                                    label += " (Domina - najczęściej pojawiająca się wartość)";
+                                                } else if (index === medianIndex && !isMedianDominantSame) {
+                                                    label += " (Mediana - środkowa wartość)";
+                                                } else if (index === startIndex && !isStartDominantSame) {
+                                                    label += " (Startowy poziom ulepszenia)";
+                                                }
+
+                                                return label;
+                                            }
                                         }
                                     }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    precision: 0
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        precision: 0
+                                    }
                                 }
                             }
-                        }
+                        });
                     });
                 {% endif %}
             </script>
         {% endif %}
 
         <div class="links">
-            <a href="/kontakt">Kontakt</a>
             <a href="https://tipply.pl/@catastroph1c" target="_blank">Wsparcie twórcy</a>
             <a href="https://www.youtube.com/@Catastroph1c" target="_blank">Kanał YouTube</a>
-            <a href="/cennik">Cennik żywiołów/zestawów</a>
+            <a href="/kontakt">Kontakt</a>
+            <a href="/cennik">Cennik</a>
         </div>
     </div>
 
@@ -187,6 +227,37 @@
         document.addEventListener('DOMContentLoaded', () => {
             showHideScroll();
         });
+    </script>
+        <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let button = document.querySelector(".info-button");
+        let tooltip = document.querySelector(".tooltip");
+
+        button.addEventListener("click", function(event) {
+            tooltip.classList.toggle("show");
+
+            // Pobieramy pozycję dymka i okna przeglądarki
+            let rect = tooltip.getBoundingClientRect();
+            let spaceAbove = rect.top;
+            let spaceBelow = window.innerHeight - rect.bottom;
+
+            // Decyzja, gdzie wyświetlić dymek
+            if (spaceBelow < 100 && spaceAbove > spaceBelow) {
+                tooltip.classList.remove("bottom");
+                tooltip.classList.add("top");
+            } else {
+                tooltip.classList.remove("top");
+                tooltip.classList.add("bottom");
+            }
+        });
+
+        // Zamykamy dymek po kliknięciu poza nim
+        document.addEventListener("click", function(event) {
+            if (!button.contains(event.target) && !tooltip.contains(event.target)) {
+                tooltip.classList.remove("show");
+            }
+        });
+    });
     </script>
 </body>
 </html>

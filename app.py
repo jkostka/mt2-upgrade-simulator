@@ -92,7 +92,7 @@ def index():
             if item_type == "please_choice":
                 error_message = "Proszę wybrać rodzaj przedmiotu."
             elif item_type == "serpent_equipment" and scroll_type == "please_choice":
-                error_message = "Proszę wybrać rodzaj zwoju dla broni."
+                error_message = "Proszę wybrać rodzaj zwoju dla ekwipunku wężowego."
             elif not 1 <= number_of_simulations <= 1000:
                 error_message = "Ilość symulacji musi być w zakresie od 1 do 1000."
             elif start_level < 0:
@@ -160,7 +160,7 @@ def index_en():
             if item_type == "please_choice":
                 error_message = "Please select an item type."
             elif item_type == "serpent_equipment" and scroll_type == "please_choice":
-                error_message = "Please select a scroll type for the weapon."
+                error_message = "Please select a scroll type for the serpent equipment."
             elif not 1 <= number_of_simulations <= 1000:
                 error_message = "The number of simulations must be between 1 and 1000."
             elif start_level < 0:
